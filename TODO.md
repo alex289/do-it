@@ -1,3 +1,2 @@
 - Database
 - authentication
-- code cleanup

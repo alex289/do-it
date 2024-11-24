@@ -1,3 +1,5 @@
+import tailwindAnimage from 'tailwindcss-animate';
+
 import type { Config } from 'tailwindcss';
 
 export default {
@@ -58,5 +60,5 @@ export default {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [tailwindAnimage],
 } satisfies Config;

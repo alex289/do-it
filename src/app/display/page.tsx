@@ -2,8 +2,8 @@
 
 import { useSearchParams } from 'next/navigation';
 
-import Charts from '@/components/Charts';
-import PieChart from '@/components/PieChart';
+import Charts from '@/components/charts';
+import PieChart from '@/components/pie-chart';
 import { mockTasks, Task } from '@/lib/mockData';
 
 export default function DisplayPage() {

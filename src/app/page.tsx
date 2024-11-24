@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 
-import CategoryList from '@/components/CategoryList';
-import Charts from '@/components/Charts';
-import PieChart from '@/components/PieChart';
-import TaskDialog from '@/components/TaskDialog';
-import TaskList from '@/components/TaskList';
+import CategoryList from '@/components/category-list';
+import Charts from '@/components/charts';
+import PieChart from '@/components/pie-chart';
+import TaskDialog from '@/components/task-dialog';
+import TaskList from '@/components/task-list';
 import { mockTasks, Task } from '@/lib/mockData';
 
 export default function Home() {
