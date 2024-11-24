@@ -4,10 +4,10 @@ import './globals.css';
 
 import { GeistSans } from 'geist/font/sans';
 import { Metadata, Viewport } from 'next';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
-import { ThemeToggle } from '@/components/theme-toggle';
+import Header from '@/components/header';
 import { Toaster } from '@/components/ui/sonner';
-import UserMenu from '@/components/user-menu';
 
 export const metadata: Metadata = {
   title: 'Personal Todo App',
@@ -38,16 +38,11 @@ export default function RootLayout({
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange>
-            <header className="mb-8 flex justify-between">
-              <h1 className="text-3xl font-bold">Personal Todo App</h1>
-
-              <div className="flex gap-4">
-                <UserMenu />
-                <ThemeToggle />
-              </div>
-            </header>
-            <main>{children}</main>
-            <Toaster />
+            <NuqsAdapter>
+              <Header />
+              <main className="mt-2">{children}</main>
+              <Toaster />
+            </NuqsAdapter>
           </ThemeProvider>
         </div>
       </body>

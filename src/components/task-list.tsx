@@ -5,65 +5,46 @@ import { updateTask } from '@/actions/update-task';
 import { Task } from '@/db/types';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { parseAsString, useQueryState } from 'nuqs';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Spinner } from './spinner';
 
 interface TaskListProps {
   tasks: Task[];
-  selectedCategory?: string;
 }
 
-export default function TaskList({ tasks, selectedCategory }: TaskListProps) {
-  const [isLoading, setIsLoading] = useState(false);
+export default function TaskList({ tasks }: TaskListProps) {
+  const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null);
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(
-    selectedCategory ?? null,
-  );
-  const [priorityFilter, setPriorityFilter] = useState<
-    'all' | 'low' | 'medium' | 'high' | null
-  >(null);
-  const [sizeFilter, setSizeFilter] = useState<
-    'all' | 'small' | 'medium' | 'large' | null
-  >(null);
+  const [searchTerm] = useQueryState('search', parseAsString.withDefault(''));
+  const [categoryFilter] = useQueryState('category', parseAsString);
+  const [priorityFilter] = useQueryState('priority', parseAsString);
+  const [sizeFilter] = useQueryState('size', parseAsString);
 
-  const filteredTasks = tasks
-    .sort((a, b) =>
-      a.isCompleted === b.isCompleted ? 0 : a.isCompleted ? 1 : -1,
-    )
-    .filter(
-      (task) =>
-        task.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (!categoryFilter || task.category === categoryFilter) &&
-        (!priorityFilter || task.priority === priorityFilter) &&
-        (!sizeFilter || task.size === sizeFilter),
-    );
-
-  const categories = Array.from(new Set(tasks.map((task) => task.category)));
-
-  function setCurrentCategory(category: string | null) {
-    setCategoryFilter(category);
-    router.push(category ? '/?category=' + category : '/');
-  }
+  const filteredTasks = useMemo(() => {
+    return tasks
+      .sort((a, b) =>
+        a.isCompleted === b.isCompleted ? 0 : a.isCompleted ? 1 : -1,
+      )
+      .filter(
+        (task) =>
+          task.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+          (!categoryFilter || task.category === categoryFilter) &&
+          (!priorityFilter || task.priority === priorityFilter) &&
+          (!sizeFilter || task.size === sizeFilter),
+      );
+  }, [tasks, searchTerm, categoryFilter, priorityFilter, sizeFilter]);
 
   const { execute: updateTaskAction } = useAction(updateTask, {
-    onExecute: () => {
-      setIsLoading(true);
+    onExecute: ({ input }) => {
+      setLoadingTaskId(input.id);
     },
     onSuccess: ({ data }) => {
-      setIsLoading(false);
+      setLoadingTaskId(null);
 
       if (data?.success) {
         router.refresh();
@@ -75,7 +56,7 @@ export default function TaskList({ tasks, selectedCategory }: TaskListProps) {
       }
     },
     onError: ({ error }) => {
-      setIsLoading(false);
+      setLoadingTaskId(null);
 
       if (error.bindArgsValidationErrors) {
         toast.error(error.bindArgsValidationErrors);
@@ -95,11 +76,11 @@ export default function TaskList({ tasks, selectedCategory }: TaskListProps) {
   });
 
   const { execute: deleteTaskAction } = useAction(deleteTask, {
-    onExecute: () => {
-      setIsLoading(true);
+    onExecute: ({ input }) => {
+      setLoadingTaskId(input.id);
     },
     onSuccess: ({ data }) => {
-      setIsLoading(false);
+      setLoadingTaskId(null);
 
       if (data?.success) {
         router.refresh();
@@ -111,7 +92,7 @@ export default function TaskList({ tasks, selectedCategory }: TaskListProps) {
       }
     },
     onError: ({ error }) => {
-      setIsLoading(false);
+      setLoadingTaskId(null);
 
       if (error.bindArgsValidationErrors) {
         toast.error(error.bindArgsValidationErrors);
@@ -131,67 +112,7 @@ export default function TaskList({ tasks, selectedCategory }: TaskListProps) {
   });
 
   return (
-    <div>
-      <div className="flex space-x-2 mb-4">
-        <Input
-          type="text"
-          placeholder="Search tasks"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-grow"
-        />
-        <Select
-          value={categoryFilter ?? ''}
-          onValueChange={(value) =>
-            value === 'all'
-              ? setCurrentCategory(null)
-              : setCurrentCategory(value || null)
-          }>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All categories</SelectItem>
-            {categories.map((category) => (
-              <SelectItem key={category} value={category}>
-                {category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
-          value={priorityFilter ?? ''}
-          onValueChange={(value: 'all' | 'low' | 'medium' | 'high') =>
-            value === 'all'
-              ? setPriorityFilter(null)
-              : setPriorityFilter(value || null)
-          }>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by priority" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All priorities</SelectItem>
-            <SelectItem value="low">Low</SelectItem>
-            <SelectItem value="medium">Medium</SelectItem>
-            <SelectItem value="high">High</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select
-          value={sizeFilter ?? ''}
-          onValueChange={(value: 'all' | 'medium' | 'small' | 'large') =>
-            value === 'all' ? setSizeFilter(null) : setSizeFilter(value || null)
-          }>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by size" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All sizes</SelectItem>
-            <SelectItem value="small">Small</SelectItem>
-            <SelectItem value="medium">Medium</SelectItem>
-            <SelectItem value="large">Large</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    <>
       {filteredTasks.length === 0 ? <p>No tasks yet.</p> : null}
       <ul className="space-y-4">
         {filteredTasks.map((task) => (
@@ -202,6 +123,7 @@ export default function TaskList({ tasks, selectedCategory }: TaskListProps) {
               <div className="flex items-center space-x-4">
                 <Checkbox
                   checked={task.isCompleted}
+                  disabled={loadingTaskId === task.id}
                   onCheckedChange={(checked) =>
                     updateTaskAction({
                       ...task,
@@ -217,9 +139,9 @@ export default function TaskList({ tasks, selectedCategory }: TaskListProps) {
               </div>
               <Button
                 variant="secondary"
-                disabled={isLoading}
+                disabled={loadingTaskId === task.id}
                 onClick={() => deleteTaskAction({ id: task.id })}>
-                {isLoading ? <Spinner /> : null}
+                {loadingTaskId === task.id ? <Spinner /> : null}
                 Delete
               </Button>
             </div>
@@ -236,6 +158,6 @@ export default function TaskList({ tasks, selectedCategory }: TaskListProps) {
           </li>
         ))}
       </ul>
-    </div>
+    </>
   );
 }
