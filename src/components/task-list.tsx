@@ -1,5 +1,6 @@
 'use client';
 
+import { Task } from '@/db/types';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -12,12 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Task } from '@/lib/mockData';
 
 interface TaskListProps {
   tasks: Task[];
   updateTask: (task: Task) => void;
-  deleteTask: (id: number) => void;
+  deleteTask: (id: string) => void;
 }
 
 export default function TaskList({

@@ -1,22 +1,24 @@
-'use client';
-
-import { useSearchParams } from 'next/navigation';
+import { db } from '@/db';
+import { Task } from '@/db/types';
 
 import Charts from '@/components/charts';
 import PieChart from '@/components/pie-chart';
-import { mockTasks, Task } from '@/lib/mockData';
 
-export default function DisplayPage() {
-  const searchParams = useSearchParams();
-  const showChart = searchParams.get('chart') !== 'false';
+export default async function DisplayPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const showChart = (await searchParams).chart;
+  const tasks = await db.query.task.findMany();
 
   return (
     <div className="space-y-8">
-      <TaskDisplay tasks={mockTasks} />
+      <TaskDisplay tasks={tasks} />
       {showChart && (
         <div className="flex justify-between">
-          <PieChart tasks={mockTasks} />
-          <Charts tasks={mockTasks} />
+          <PieChart tasks={tasks} />
+          <Charts tasks={tasks} />
         </div>
       )}
     </div>

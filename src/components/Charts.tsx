@@ -1,5 +1,6 @@
 'use client';
 
+import { Task } from '@/db/types';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +9,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Task } from '@/lib/mockData';
 
 interface ChartsProps {
   tasks: Task[];

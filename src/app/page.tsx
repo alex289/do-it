@@ -1,5 +1,6 @@
 'use client';
 
+import { Task } from '@/db/types';
 import { useState } from 'react';
 
 import CategoryList from '@/components/category-list';
@@ -7,18 +8,15 @@ import Charts from '@/components/charts';
 import PieChart from '@/components/pie-chart';
 import TaskDialog from '@/components/task-dialog';
 import TaskList from '@/components/task-list';
-import { mockTasks, Task } from '@/lib/mockData';
 
 export default function Home() {
-  const [tasks, setTasks] = useState<Task[]>(mockTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-  const addTask = (newTask: Omit<Task, 'id' | 'createdAt'>) => {
+  const addTask = (newTask: Task) => {
     setTasks((prevTasks) => [
       ...prevTasks,
       {
         ...newTask,
-        id: Math.max(...prevTasks.map((t) => t.id)) + 1,
-        createdAt: new Date(),
       },
     ]);
   };
@@ -31,7 +29,7 @@ export default function Home() {
     );
   };
 
-  const deleteTask = (id: number) => {
+  const deleteTask = (id: string) => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   };
 

@@ -1,7 +1,8 @@
 'use client';
 
+import { Task } from '@/db/types';
+
 import { Button } from '@/components/ui/button';
-import { Task } from '@/lib/mockData';
 
 interface CategoryListProps {
   tasks: Task[];

@@ -1,5 +1,6 @@
 'use client';
 
+import { Task } from '@/db/types';
 import { CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
 
@@ -23,11 +24,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Task } from '@/lib/mockData';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
 interface TaskDialogProps {
-  addTask: (task: Omit<Task, 'id' | 'createdAt'>) => void;
+  addTask: (task: Task) => void;
   categories: string[];
 }
 
@@ -37,7 +37,7 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
   const [category, setCategory] = useState('');
   const [newCategory, setNewCategory] = useState('');
   const [isNewCategory, setIsNewCategory] = useState(false);
-  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
+  const [dueDate, setDueDate] = useState<Date | null>(null);
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
   const [size, setSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [isOpen, setIsOpen] = useState(false);
@@ -46,13 +46,16 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
     e.preventDefault();
     const finalCategory = isNewCategory ? newCategory : category;
     addTask({
+      id: '1',
       title,
+      userId: '1',
       description,
       category: finalCategory,
       isCompleted: false,
       dueDate,
       priority,
       size,
+      createdAt: new Date(),
     });
     setIsOpen(false);
     resetForm();
@@ -64,7 +67,7 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
     setCategory('');
     setNewCategory('');
     setIsNewCategory(false);
-    setDueDate(undefined);
+    setDueDate(null);
     setPriority('medium');
     setSize('medium');
   };
@@ -141,8 +144,8 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={dueDate}
-                  onSelect={setDueDate}
+                  selected={dueDate ?? undefined}
+                  onSelect={(date) => setDueDate(date ?? null)}
                   className="rounded-md border"
                 />
               </PopoverContent>

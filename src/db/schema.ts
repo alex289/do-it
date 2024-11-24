@@ -1,5 +1,28 @@
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
+// --- Main Schema --- //
+
+export const task = sqliteTable('task', {
+  id: text('id').primaryKey(),
+  userId: text('userId')
+    .notNull()
+    .references(() => user.id),
+  title: text('title').notNull(),
+  description: text('description'),
+  category: text('category').notNull(),
+  isCompleted: integer('isCompleted', {
+    mode: 'boolean',
+  }).notNull(),
+  createdAt: integer('createdAt', {
+    mode: 'timestamp',
+  }).notNull(),
+  dueDate: integer('dueDate', {
+    mode: 'timestamp',
+  }),
+  priority: text('priority').notNull(),
+  size: text('size').notNull(),
+});
+
 // --- Better Auth Schema --- //
 
 export const user = sqliteTable('user', {
