@@ -9,3 +9,8 @@ Another task management app build with Next.js, Tailwind CSS, and Drizzle.
 3. Apply the database schema with `pnpm db:push`
 4. Start the development server with `pnpm dev`
 5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## TODO
+
+- Email verification
+- Password reset
