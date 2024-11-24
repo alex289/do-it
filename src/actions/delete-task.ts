@@ -3,6 +3,7 @@
 import { db } from '@/db';
 import { task } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 import { auth } from '@/lib/auth';
@@ -34,5 +35,6 @@ export const deleteTask = actionClient
 
     await db.delete(task).where(eq(task.id, id));
 
+    revalidatePath('/');
     return { success: true };
   });

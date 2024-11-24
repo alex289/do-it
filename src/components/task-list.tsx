@@ -19,6 +19,7 @@ interface TaskListProps {
 
 export default function TaskList({ tasks }: TaskListProps) {
   const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null);
+  const [showMore, setShowMore] = useState(false);
   const router = useRouter();
   const [searchTerm] = useQueryState('search', parseAsString.withDefault(''));
   const [categoryFilter] = useQueryState('category', parseAsString);
@@ -115,49 +116,113 @@ export default function TaskList({ tasks }: TaskListProps) {
     <>
       {filteredTasks.length === 0 ? <p>No tasks yet.</p> : null}
       <ul className="space-y-4">
-        {filteredTasks.map((task) => (
-          <li
-            key={task.id}
-            className="flex flex-col p-4 bg-white dark:bg-black rounded shadow">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Checkbox
-                  checked={task.isCompleted}
+        {filteredTasks
+          .filter((task) =>
+            filteredTasks.length > 5 ? !task.isCompleted : true,
+          )
+          .map((task) => (
+            <li
+              key={task.id}
+              className="flex flex-col p-4 bg-white dark:bg-black rounded shadow">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <Checkbox
+                    checked={task.isCompleted}
+                    disabled={loadingTaskId === task.id}
+                    onCheckedChange={(checked) =>
+                      updateTaskAction({
+                        ...task,
+                        description: task.description ?? undefined,
+                        dueDate: task.dueDate ?? undefined,
+                        isCompleted: checked as boolean,
+                      })
+                    }
+                  />
+                  <span className={task.isCompleted ? 'line-through' : ''}>
+                    {task.title}
+                  </span>
+                </div>
+                <Button
+                  variant="secondary"
                   disabled={loadingTaskId === task.id}
-                  onCheckedChange={(checked) =>
-                    updateTaskAction({
-                      ...task,
-                      description: task.description ?? undefined,
-                      dueDate: task.dueDate ?? undefined,
-                      isCompleted: checked as boolean,
-                    })
-                  }
-                />
-                <span className={task.isCompleted ? 'line-through' : ''}>
-                  {task.title}
-                </span>
+                  onClick={() => deleteTaskAction({ id: task.id })}>
+                  {loadingTaskId === task.id ? <Spinner /> : null}
+                  Delete
+                </Button>
               </div>
-              <Button
-                variant="secondary"
-                disabled={loadingTaskId === task.id}
-                onClick={() => deleteTaskAction({ id: task.id })}>
-                {loadingTaskId === task.id ? <Spinner /> : null}
-                Delete
-              </Button>
-            </div>
-            <p className="mt-2 text-sm text-gray-600">{task.description}</p>
-            <div className="mt-2 flex justify-between text-sm text-gray-500">
-              <span>Category: {task.category}</span>
-              <span suppressHydrationWarning>
-                Due:{' '}
-                {task.dueDate ? task.dueDate.toLocaleDateString() : 'Not set'}
-              </span>
-              <span>Priority: {task.priority}</span>
-              <span>Size: {task.size}</span>
-            </div>
-          </li>
-        ))}
+              <p className="mt-2 text-sm text-gray-600">{task.description}</p>
+              <div className="mt-2 flex justify-between text-sm text-gray-500">
+                <span>Category: {task.category}</span>
+                <span suppressHydrationWarning>
+                  Due:{' '}
+                  {task.dueDate ? task.dueDate.toLocaleDateString() : 'Not set'}
+                </span>
+                <span>Priority: {task.priority}</span>
+                <span>Size: {task.size}</span>
+              </div>
+            </li>
+          ))}
       </ul>
+      {filteredTasks.length > 5 &&
+      filteredTasks.some((task) => task.isCompleted) ? (
+        <Button
+          variant="outline"
+          onClick={() => setShowMore((oldShowMore) => !oldShowMore)}>
+          Show completed tasks
+        </Button>
+      ) : null}
+      {filteredTasks.length > 5 && showMore ? (
+        <ul className="space-y-4">
+          {filteredTasks
+            .filter((task) =>
+              filteredTasks.length > 5 ? task.isCompleted : true,
+            )
+            .map((task) => (
+              <li
+                key={task.id}
+                className="flex flex-col p-4 bg-white dark:bg-black rounded shadow">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <Checkbox
+                      checked={task.isCompleted}
+                      disabled={loadingTaskId === task.id}
+                      onCheckedChange={(checked) =>
+                        updateTaskAction({
+                          ...task,
+                          description: task.description ?? undefined,
+                          dueDate: task.dueDate ?? undefined,
+                          isCompleted: checked as boolean,
+                        })
+                      }
+                    />
+                    <span className={task.isCompleted ? 'line-through' : ''}>
+                      {task.title}
+                    </span>
+                  </div>
+                  <Button
+                    variant="secondary"
+                    disabled={loadingTaskId === task.id}
+                    onClick={() => deleteTaskAction({ id: task.id })}>
+                    {loadingTaskId === task.id ? <Spinner /> : null}
+                    Delete
+                  </Button>
+                </div>
+                <p className="mt-2 text-sm text-gray-600">{task.description}</p>
+                <div className="mt-2 flex justify-between text-sm text-gray-500">
+                  <span>Category: {task.category}</span>
+                  <span suppressHydrationWarning>
+                    Due:{' '}
+                    {task.dueDate
+                      ? task.dueDate.toLocaleDateString()
+                      : 'Not set'}
+                  </span>
+                  <span>Priority: {task.priority}</span>
+                  <span>Size: {task.size}</span>
+                </div>
+              </li>
+            ))}
+        </ul>
+      ) : null}
     </>
   );
 }

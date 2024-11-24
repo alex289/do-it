@@ -48,7 +48,7 @@ interface TaskDialogProps {
 const taskFormSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
-  category: z.string(),
+  category: z.string().min(1),
   isCompleted: z.boolean(),
   dueDate: z.date().optional(),
   priority: z.enum(['low', 'medium', 'high']),

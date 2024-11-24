@@ -2,6 +2,7 @@
 
 import { db } from '@/db';
 import { task } from '@/db/schema';
+import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 import { auth } from '@/lib/auth';
@@ -27,5 +28,6 @@ export const createTask = actionClient
       createdAt: new Date(),
     });
 
+    revalidatePath('/');
     return { id };
   });

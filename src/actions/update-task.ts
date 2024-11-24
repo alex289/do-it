@@ -3,6 +3,7 @@
 import { db } from '@/db';
 import { task } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 import { auth } from '@/lib/auth';
@@ -39,5 +40,6 @@ export const updateTask = actionClient
       })
       .where(eq(task.id, parsedInput.id));
 
+    revalidatePath('/');
     return { success: true };
   });
