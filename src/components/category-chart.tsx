@@ -14,7 +14,7 @@ interface ChartsProps {
   tasks: Task[];
 }
 
-export default function Charts({ tasks }: ChartsProps) {
+export default function CategoryCharts({ tasks }: ChartsProps) {
   const chartData = Object.entries(
     tasks.reduce(
       (acc, task) => {

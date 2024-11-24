@@ -1,6 +1,5 @@
 'use client';
 
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 

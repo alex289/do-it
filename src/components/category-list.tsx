@@ -1,35 +1,30 @@
 'use client';
 
-import { Task } from '@/db/types';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 
 interface CategoryListProps {
-  tasks: Task[];
+  categories: string[];
 }
 
-export default function CategoryList({ tasks }: CategoryListProps) {
-  const categories = tasks.reduce(
-    (acc, task) => {
-      acc[task.category] = (acc[task.category] ?? 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
+export default function CategoryList({ categories }: CategoryListProps) {
   return (
     <div className="mb-8">
       <h2 className="text-2xl font-bold mb-4">Categories</h2>
       <div className="space-y-2">
-        {Object.entries(categories).map(([category, count]) => (
+        {Object.entries(categories).map(([count, category]) => (
           <Button
+            asChild
             key={category}
             variant="outline"
             className="w-full justify-between">
-            {category}
-            <span className="bg-primary text-primary-foreground rounded-full px-2 py-1 text-xs">
-              {count}
-            </span>
+            <Link href={`?category=${category}`}>
+              {category}
+              <span className="bg-primary text-primary-foreground rounded-full px-2 py-1 text-xs">
+                {count}
+              </span>
+            </Link>
           </Button>
         ))}
       </div>

@@ -1,8 +1,8 @@
 import { db } from '@/db';
 import { Task } from '@/db/types';
 
-import Charts from '@/components/charts';
-import PieChart from '@/components/pie-chart';
+import CategoryCharts from '@/components/category-chart';
+import TaskStatusChart from '@/components/task-status-chart';
 
 export default async function DisplayPage({
   searchParams,
@@ -17,8 +17,8 @@ export default async function DisplayPage({
       <TaskDisplay tasks={tasks} />
       {showChart && (
         <div className="flex justify-between">
-          <PieChart tasks={tasks} />
-          <Charts tasks={tasks} />
+          <TaskStatusChart tasks={tasks} />
+          <CategoryCharts tasks={tasks} />
         </div>
       )}
     </div>

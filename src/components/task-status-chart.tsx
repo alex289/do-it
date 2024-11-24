@@ -19,7 +19,7 @@ interface PieChartProps {
   tasks: Task[];
 }
 
-export default function PieChart({ tasks }: PieChartProps) {
+export default function TaskStatusChart({ tasks }: PieChartProps) {
   const completedTasks = tasks.filter((task) => task.isCompleted).length;
   const openTasks = tasks.length - completedTasks;
 

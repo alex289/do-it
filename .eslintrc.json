@@ -11,5 +11,8 @@
     "next/typescript"
   ],
   "plugins": ["@typescript-eslint"],
-  "ignorePatterns": ["chart.tsx"]
+  "ignorePatterns": ["chart.tsx"],
+  "rules": {
+    "@typescript-eslint/no-misused-promises": "off"
+  }
 }

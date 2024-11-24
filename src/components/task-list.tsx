@@ -18,17 +18,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Spinner } from './spinnter';
+import { Spinner } from './spinner';
 
 interface TaskListProps {
   tasks: Task[];
+  selectedCategory?: string;
 }
 
-export default function TaskList({ tasks }: TaskListProps) {
+export default function TaskList({ tasks, selectedCategory }: TaskListProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(
+    selectedCategory ?? null,
+  );
   const [priorityFilter, setPriorityFilter] = useState<
     'all' | 'low' | 'medium' | 'high' | null
   >(null);
@@ -49,6 +52,11 @@ export default function TaskList({ tasks }: TaskListProps) {
     );
 
   const categories = Array.from(new Set(tasks.map((task) => task.category)));
+
+  function setCurrentCategory(category: string | null) {
+    setCategoryFilter(category);
+    router.push(category ? '/?category=' + category : '/');
+  }
 
   const { execute: updateTaskAction } = useAction(updateTask, {
     onExecute: () => {
@@ -136,8 +144,8 @@ export default function TaskList({ tasks }: TaskListProps) {
           value={categoryFilter ?? ''}
           onValueChange={(value) =>
             value === 'all'
-              ? setCategoryFilter(null)
-              : setCategoryFilter(value || null)
+              ? setCurrentCategory(null)
+              : setCurrentCategory(value || null)
           }>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by category" />
@@ -208,7 +216,7 @@ export default function TaskList({ tasks }: TaskListProps) {
                 </span>
               </div>
               <Button
-                variant="destructive"
+                variant="secondary"
                 disabled={isLoading}
                 onClick={() => deleteTaskAction({ id: task.id })}>
                 {isLoading ? <Spinner /> : null}
