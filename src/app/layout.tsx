@@ -6,6 +6,8 @@ import { GeistSans } from 'geist/font/sans';
 import { Metadata, Viewport } from 'next';
 
 import { ThemeToggle } from '@/components/theme-toggle';
+import { Toaster } from '@/components/ui/toaster';
+import UserMenu from '@/components/user-menu';
 
 export const metadata: Metadata = {
   title: 'Personal Todo App',
@@ -38,9 +40,14 @@ export default function RootLayout({
             disableTransitionOnChange>
             <header className="mb-8 flex justify-between">
               <h1 className="text-3xl font-bold">Personal Todo App</h1>
-              <ThemeToggle />
+
+              <div className="flex gap-4">
+                <UserMenu />
+                <ThemeToggle />
+              </div>
             </header>
-            {children}
+            <main>{children}</main>
+            <Toaster />
           </ThemeProvider>
         </div>
       </body>

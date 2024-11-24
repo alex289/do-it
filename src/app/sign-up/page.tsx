@@ -19,56 +19,44 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { signIn } from '@/lib/auth-client';
+import { signUp } from '@/lib/auth-client';
 
-const signInSchema = z.object({
+const signUpSchema = z.object({
+  name: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(8),
 });
 
-export default function SignInPage() {
+export default function SignUpPage() {
   const { toast } = useToast();
   const router = useRouter();
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
     },
   });
 
-  async function passkeySignIn() {
-    const res = await signIn.passkey();
-
-    if (res?.error) {
-      toast({
-        variant: 'destructive',
-        title: 'Failed to sign-in',
-        description: res.error.message,
-      });
-      return;
-    }
-
-    // Workaround: router.push makes the UserMenu not rendering at all
-    window.location.href = '/';
-  }
-
-  async function onSubmit(values: z.infer<typeof signInSchema>) {
-    const res = await signIn.email({
+  async function onSubmit(values: z.infer<typeof signUpSchema>) {
+    const res = await signUp.email({
       email: values.email,
       password: values.password,
+      name: values.name,
     });
 
     if (res.error) {
       toast({
         variant: 'destructive',
-        title: 'Failed to sign-in',
+        title: 'Failed to sign-up',
         description: res.error.message,
       });
       return;
@@ -79,14 +67,28 @@ export default function SignInPage() {
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Sign In</CardTitle>
+        <CardTitle className="text-2xl">Sign Up</CardTitle>
         <CardDescription>
-          Enter your email and password to sign in.
+          Enter your name, email and password to create an account.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="grid gap-2">
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Max Mustermann" {...field} />
+                  </FormControl>
+                  <FormDescription>Just to display your name</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"
@@ -118,23 +120,15 @@ export default function SignInPage() {
               )}
             />
 
-            <div className="flex flex-col gap-4">
-              <Button type="submit">Sign-in</Button>
-
-              <Button
-                variant="outline"
-                type="button"
-                className="gap-2"
-                onClick={async () => await passkeySignIn()}>
-                Sign-in with Passkey
-              </Button>
-            </div>
+            <Button type="submit" className="w-full">
+              Sign-up
+            </Button>
           </form>
         </Form>
         <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{' '}
-          <Link href="/sign-up" className="underline">
-            Sign up
+          Already have an account?{' '}
+          <Link href="/sign-in" className="underline">
+            Sign in
           </Link>
         </div>
       </CardContent>
