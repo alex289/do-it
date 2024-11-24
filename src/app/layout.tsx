@@ -6,7 +6,7 @@ import { GeistSans } from 'geist/font/sans';
 import { Metadata, Viewport } from 'next';
 
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner';
 import UserMenu from '@/components/user-menu';
 
 export const metadata: Metadata = {

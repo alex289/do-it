@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 'use client';
 
-import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -33,7 +33,6 @@ const signInSchema = z.object({
 });
 
 export default function SignInPage() {
-  const { toast } = useToast();
   const router = useRouter();
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -47,9 +46,7 @@ export default function SignInPage() {
     const res = await signIn.passkey();
 
     if (res?.error) {
-      toast({
-        variant: 'destructive',
-        title: 'Failed to sign-in',
+      toast.error('Failed to sign-in', {
         description: res.error.message,
       });
       return;
@@ -66,9 +63,7 @@ export default function SignInPage() {
     });
 
     if (res.error) {
-      toast({
-        variant: 'destructive',
-        title: 'Failed to sign-in',
+      toast.error('Failed to sign-in', {
         description: res.error.message,
       });
       return;

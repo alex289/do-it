@@ -1,7 +1,12 @@
 'use client';
 
+import { deleteTask } from '@/actions/delete-task';
+import { updateTask } from '@/actions/update-task';
 import { Task } from '@/db/types';
+import { useAction } from 'next-safe-action/hooks';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -13,18 +18,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from './spinnter';
 
 interface TaskListProps {
   tasks: Task[];
-  updateTask: (task: Task) => void;
-  deleteTask: (id: string) => void;
 }
 
-export default function TaskList({
-  tasks,
-  updateTask,
-  deleteTask,
-}: TaskListProps) {
+export default function TaskList({ tasks }: TaskListProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<
@@ -33,10 +35,6 @@ export default function TaskList({
   const [sizeFilter, setSizeFilter] = useState<
     'all' | 'small' | 'medium' | 'large' | null
   >(null);
-
-  const handleComplete = (task: Task, isCompleted: boolean) => {
-    updateTask({ ...task, isCompleted });
-  };
 
   const filteredTasks = tasks
     .sort((a, b) =>
@@ -51,6 +49,78 @@ export default function TaskList({
     );
 
   const categories = Array.from(new Set(tasks.map((task) => task.category)));
+
+  const { execute: updateTaskAction } = useAction(updateTask, {
+    onExecute: () => {
+      setIsLoading(true);
+    },
+    onSuccess: ({ data }) => {
+      setIsLoading(false);
+
+      if (data?.success) {
+        router.refresh();
+        return;
+      }
+
+      if (data?.error) {
+        toast.error(data.error);
+      }
+    },
+    onError: ({ error }) => {
+      setIsLoading(false);
+
+      if (error.bindArgsValidationErrors) {
+        toast.error(error.bindArgsValidationErrors);
+        return;
+      }
+      if (error.serverError) {
+        toast.error(error.serverError);
+        return;
+      }
+      if (error.validationErrors?._errors) {
+        for (const message of error.validationErrors._errors) {
+          toast.error(message);
+        }
+        return;
+      }
+    },
+  });
+
+  const { execute: deleteTaskAction } = useAction(deleteTask, {
+    onExecute: () => {
+      setIsLoading(true);
+    },
+    onSuccess: ({ data }) => {
+      setIsLoading(false);
+
+      if (data?.success) {
+        router.refresh();
+        return;
+      }
+
+      if (data?.error) {
+        toast.error(data.error);
+      }
+    },
+    onError: ({ error }) => {
+      setIsLoading(false);
+
+      if (error.bindArgsValidationErrors) {
+        toast.error(error.bindArgsValidationErrors);
+        return;
+      }
+      if (error.serverError) {
+        toast.error(error.serverError);
+        return;
+      }
+      if (error.validationErrors?._errors) {
+        for (const message of error.validationErrors._errors) {
+          toast.error(message);
+        }
+        return;
+      }
+    },
+  });
 
   return (
     <div>
@@ -114,6 +184,7 @@ export default function TaskList({
           </SelectContent>
         </Select>
       </div>
+      {filteredTasks.length === 0 ? <p>No tasks yet.</p> : null}
       <ul className="space-y-4">
         {filteredTasks.map((task) => (
           <li
@@ -124,14 +195,23 @@ export default function TaskList({
                 <Checkbox
                   checked={task.isCompleted}
                   onCheckedChange={(checked) =>
-                    handleComplete(task, checked as boolean)
+                    updateTaskAction({
+                      ...task,
+                      description: task.description ?? undefined,
+                      dueDate: task.dueDate ?? undefined,
+                      isCompleted: checked as boolean,
+                    })
                   }
                 />
                 <span className={task.isCompleted ? 'line-through' : ''}>
                   {task.title}
                 </span>
               </div>
-              <Button variant="destructive" onClick={() => deleteTask(task.id)}>
+              <Button
+                variant="destructive"
+                disabled={isLoading}
+                onClick={() => deleteTaskAction({ id: task.id })}>
+                {isLoading ? <Spinner /> : null}
                 Delete
               </Button>
             </div>

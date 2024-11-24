@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 'use client';
 
-import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,6 @@ const signUpSchema = z.object({
 });
 
 export default function SignUpPage() {
-  const { toast } = useToast();
   const router = useRouter();
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -54,9 +53,7 @@ export default function SignUpPage() {
     });
 
     if (res.error) {
-      toast({
-        variant: 'destructive',
-        title: 'Failed to sign-up',
+      toast.error('Failed to sign-up', {
         description: res.error.message,
       });
       return;

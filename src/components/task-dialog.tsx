@@ -1,8 +1,11 @@
 'use client';
 
-import { Task } from '@/db/types';
+import { createTask } from '@/actions/create-task';
 import { CalendarIcon } from 'lucide-react';
+import { useAction } from 'next-safe-action/hooks';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -24,20 +27,22 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Spinner } from './spinnter';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
 interface TaskDialogProps {
-  addTask: (task: Task) => void;
   categories: string[];
 }
 
-export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
+export default function TaskDialog({ categories }: TaskDialogProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [newCategory, setNewCategory] = useState('');
   const [isNewCategory, setIsNewCategory] = useState(false);
-  const [dueDate, setDueDate] = useState<Date | null>(null);
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
   const [size, setSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [isOpen, setIsOpen] = useState(false);
@@ -45,32 +50,53 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const finalCategory = isNewCategory ? newCategory : category;
-    addTask({
-      id: '1',
+    createTaskAction({
       title,
-      userId: '1',
       description,
       category: finalCategory,
       isCompleted: false,
       dueDate,
       priority,
       size,
-      createdAt: new Date(),
     });
-    setIsOpen(false);
-    resetForm();
   };
 
-  const resetForm = () => {
-    setTitle('');
-    setDescription('');
-    setCategory('');
-    setNewCategory('');
-    setIsNewCategory(false);
-    setDueDate(null);
-    setPriority('medium');
-    setSize('medium');
-  };
+  const { execute: createTaskAction } = useAction(createTask, {
+    onExecute: () => {
+      setIsLoading(true);
+    },
+    onSuccess: ({ data }) => {
+      setIsLoading(false);
+
+      if (data?.id) {
+        router.refresh();
+        setIsOpen(false);
+        return;
+      }
+
+      if (data?.error) {
+        toast.error(data.error);
+      }
+    },
+    onError: ({ error }) => {
+      setIsLoading(false);
+
+      if (error.bindArgsValidationErrors) {
+        toast.error(error.bindArgsValidationErrors);
+        return;
+      }
+      if (error.serverError) {
+        toast.error(error.serverError);
+        return;
+      }
+      if (error.validationErrors?._errors) {
+        for (const message of error.validationErrors._errors) {
+          toast.error(message);
+        }
+        return;
+      }
+    },
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -144,8 +170,8 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={dueDate ?? undefined}
-                  onSelect={(date) => setDueDate(date ?? null)}
+                  selected={dueDate}
+                  onSelect={setDueDate}
                   className="rounded-md border"
                 />
               </PopoverContent>
@@ -180,7 +206,10 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
             </Select>
           </div>
           <DialogFooter>
-            <Button type="submit">Save Task</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? <Spinner /> : null}
+              Save Task
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
