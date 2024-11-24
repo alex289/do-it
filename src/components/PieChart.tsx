@@ -1,24 +1,34 @@
-'use client'
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { PieChart as RechartsChart, Pie, Cell, ResponsiveContainer } from "recharts"
-import { Task } from '@/lib/mockData'
+import {
+  Cell,
+  Pie,
+  PieChart as RechartsChart,
+  ResponsiveContainer,
+} from 'recharts';
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
+import { Task } from '@/lib/mockData';
 
 interface PieChartProps {
   tasks: Task[];
 }
 
 export default function PieChart({ tasks }: PieChartProps) {
-  const completedTasks = tasks.filter(task => task.isCompleted).length
-  const openTasks = tasks.length - completedTasks
+  const completedTasks = tasks.filter((task) => task.isCompleted).length;
+  const openTasks = tasks.length - completedTasks;
 
   const data = [
     { name: 'Completed', value: completedTasks },
     { name: 'Open', value: openTasks },
-  ]
+  ];
 
-  const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))']
+  const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))'];
 
   return (
     <Card>
@@ -29,16 +39,15 @@ export default function PieChart({ tasks }: PieChartProps) {
         <ChartContainer
           config={{
             completed: {
-              label: "Completed",
+              label: 'Completed',
               color: COLORS[0],
             },
             open: {
-              label: "Open",
+              label: 'Open',
               color: COLORS[1],
             },
           }}
-          className="h-[300px] max-w-full"
-        >
+          className="h-[300px] max-w-full">
           <ResponsiveContainer width="100%" height="100%">
             <RechartsChart>
               <Pie
@@ -48,10 +57,12 @@ export default function PieChart({ tasks }: PieChartProps) {
                 labelLine={false}
                 outerRadius={80}
                 fill="#8884d8"
-                dataKey="value"
-              >
+                dataKey="value">
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <ChartTooltip content={<ChartTooltipContent />} />
@@ -60,6 +71,5 @@ export default function PieChart({ tasks }: PieChartProps) {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }
-

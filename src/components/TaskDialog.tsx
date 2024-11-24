@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Calendar } from "@/components/ui/calendar"
+import { CalendarIcon } from 'lucide-react';
+import { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Dialog,
   DialogContent,
@@ -13,15 +13,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Task } from '@/lib/mockData'
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Task } from '@/lib/mockData';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
 interface TaskDialogProps {
   addTask: (task: Omit<Task, 'id' | 'createdAt'>) => void;
@@ -29,42 +32,42 @@ interface TaskDialogProps {
 }
 
 export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [category, setCategory] = useState('')
-  const [newCategory, setNewCategory] = useState('')
-  const [isNewCategory, setIsNewCategory] = useState(false)
-  const [dueDate, setDueDate] = useState<Date | undefined>(undefined)
-  const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium')
-  const [size, setSize] = useState<'small' | 'medium' | 'large'>('medium')
-  const [isOpen, setIsOpen] = useState(false)
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
+  const [newCategory, setNewCategory] = useState('');
+  const [isNewCategory, setIsNewCategory] = useState(false);
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
+  const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
+  const [size, setSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const finalCategory = isNewCategory ? newCategory : category
-    addTask({ 
-      title, 
-      description, 
-      category: finalCategory, 
+    e.preventDefault();
+    const finalCategory = isNewCategory ? newCategory : category;
+    addTask({
+      title,
+      description,
+      category: finalCategory,
       isCompleted: false,
       dueDate,
       priority,
-      size
-    })
-    setIsOpen(false)
-    resetForm()
-  }
+      size,
+    });
+    setIsOpen(false);
+    resetForm();
+  };
 
   const resetForm = () => {
-    setTitle('')
-    setDescription('')
-    setCategory('')
-    setNewCategory('')
-    setIsNewCategory(false)
-    setDueDate(undefined)
-    setPriority('medium')
-    setSize('medium')
-  }
+    setTitle('');
+    setDescription('');
+    setCategory('');
+    setNewCategory('');
+    setIsNewCategory(false);
+    setDueDate(undefined);
+    setPriority('medium');
+    setSize('medium');
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -75,7 +78,8 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
         <DialogHeader>
           <DialogTitle>Add New Task</DialogTitle>
           <DialogDescription>
-            Create a new task with all the details. Click save when you are done.
+            Create a new task with all the details. Click save when you are
+            done.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -95,20 +99,21 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
               value={category}
               onValueChange={(value) => {
                 if (value === 'new') {
-                  setIsNewCategory(true)
-                  setCategory('')
+                  setIsNewCategory(true);
+                  setCategory('');
                 } else {
-                  setIsNewCategory(false)
-                  setCategory(value)
+                  setIsNewCategory(false);
+                  setCategory(value);
                 }
-              }}
-            >
+              }}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
                 ))}
                 <SelectItem value="new">Add new category</SelectItem>
               </SelectContent>
@@ -121,13 +126,32 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
                 required
               />
             )}
-            <Calendar
-              mode="single"
-              selected={dueDate}
-              onSelect={setDueDate}
-              className="rounded-md border"
-            />
-            <Select value={priority} onValueChange={(value: 'low' | 'medium' | 'high') => setPriority(value)}>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant={'outline'}>
+                  {dueDate ? (
+                    dueDate.toLocaleDateString()
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dueDate}
+                  onSelect={setDueDate}
+                  className="rounded-md border"
+                />
+              </PopoverContent>
+            </Popover>
+            <Select
+              value={priority}
+              onValueChange={(value: 'low' | 'medium' | 'high') =>
+                setPriority(value)
+              }>
               <SelectTrigger>
                 <SelectValue placeholder="Select priority" />
               </SelectTrigger>
@@ -137,7 +161,11 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
                 <SelectItem value="high">High</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={size} onValueChange={(value: 'small' | 'medium' | 'large') => setSize(value)}>
+            <Select
+              value={size}
+              onValueChange={(value: 'small' | 'medium' | 'large') =>
+                setSize(value)
+              }>
               <SelectTrigger>
                 <SelectValue placeholder="Select size" />
               </SelectTrigger>
@@ -154,6 +182,5 @@ export default function TaskDialog({ addTask, categories }: TaskDialogProps) {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-
