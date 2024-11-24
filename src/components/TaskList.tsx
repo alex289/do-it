@@ -118,7 +118,7 @@ export default function TaskList({
         {filteredTasks.map((task) => (
           <li
             key={task.id}
-            className="flex flex-col p-4 bg-white rounded shadow">
+            className="flex flex-col p-4 bg-white dark:bg-black rounded shadow">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Checkbox

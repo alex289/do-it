@@ -1,4 +1,3 @@
 - Database
-- Dark mode
 - authentication
 - code cleanup

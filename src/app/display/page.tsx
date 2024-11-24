@@ -29,7 +29,9 @@ function TaskDisplay({ tasks }: { tasks: Task[] }) {
       <h2 className="text-2xl font-bold mb-4">Tasks</h2>
       <ul className="space-y-2">
         {tasks.map((task) => (
-          <li key={task.id} className="p-2 bg-white rounded shadow">
+          <li
+            key={task.id}
+            className="p-2 bg-white dark:bg-black rounded shadow">
             <span className={task.isCompleted ? 'line-through' : ''}>
               {task.title}
             </span>
