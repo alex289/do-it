@@ -10,7 +10,7 @@ interface CategoryListProps {
 export default function CategoryList({ tasks }: CategoryListProps) {
   const categories = tasks.reduce(
     (acc, task) => {
-      acc[task.category] = (acc[task.category] || 0) + 1;
+      acc[task.category] = (acc[task.category] ?? 0) + 1;
       return acc;
     },
     {} as Record<string, number>,

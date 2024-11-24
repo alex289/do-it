@@ -2,12 +2,10 @@ import { ThemeProvider } from '@/components/theme-provider';
 
 import './globals.css';
 
+import { GeistSans } from 'geist/font/sans';
 import { Metadata, Viewport } from 'next';
-import { Geist } from 'next/font/google';
 
 import { ThemeToggle } from '@/components/theme-toggle';
-
-const geist = Geist({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Personal Todo App',
@@ -31,8 +29,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={geist.className}>
-        <div className="container mx-auto p-4">
+      <body className={GeistSans.variable}>
+        <div className="container mx-auto p-4 font-sans">
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

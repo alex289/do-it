@@ -21,9 +21,9 @@ export default function Charts({ tasks }: ChartsProps) {
         if (!acc[task.category]) {
           acc[task.category] = { completed: 0, total: 0 };
         }
-        acc[task.category].total++;
+        acc[task.category]!.total++;
         if (task.isCompleted) {
-          acc[task.category].completed++;
+          acc[task.category]!.completed++;
         }
         return acc;
       },
