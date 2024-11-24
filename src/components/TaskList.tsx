@@ -63,7 +63,7 @@ export default function TaskList({
           className="flex-grow"
         />
         <Select
-          value={categoryFilter || ''}
+          value={categoryFilter ?? ''}
           onValueChange={(value) =>
             value === 'all'
               ? setCategoryFilter(null)
@@ -82,7 +82,7 @@ export default function TaskList({
           </SelectContent>
         </Select>
         <Select
-          value={priorityFilter || ''}
+          value={priorityFilter ?? ''}
           onValueChange={(value: 'all' | 'low' | 'medium' | 'high') =>
             value === 'all'
               ? setPriorityFilter(null)
@@ -99,7 +99,7 @@ export default function TaskList({
           </SelectContent>
         </Select>
         <Select
-          value={sizeFilter || ''}
+          value={sizeFilter ?? ''}
           onValueChange={(value: 'all' | 'medium' | 'small' | 'large') =>
             value === 'all' ? setSizeFilter(null) : setSizeFilter(value || null)
           }>

@@ -1,7 +1,4 @@
 - Database
-- Eslint
-- Github Actions
-- .vscode settings
 - Dark mode
 - authentication
 - code cleanup
