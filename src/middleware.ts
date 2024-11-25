@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import type { Session } from 'better-auth/types';
 import type { NextRequest } from 'next/server';
 
-const allowedPaths = ['/sign-in', '/sign-up'];
+const allowedPaths = ['/sign-in', '/sign-up', '/reset-password'];
 
 export default async function authMiddleware(request: NextRequest) {
   const response = await fetch(
@@ -28,6 +28,6 @@ export default async function authMiddleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|auth).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|auth|static).*)',
   ],
 };

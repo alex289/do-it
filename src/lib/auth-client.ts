@@ -6,5 +6,13 @@ const authClient = createAuthClient({
   plugins: [passkeyClient()],
 });
 
-export const { signUp, signIn, signOut, useSession, passkey, useListPasskeys } =
-  authClient;
+export const {
+  signUp,
+  signIn,
+  signOut,
+  useSession,
+  passkey,
+  useListPasskeys,
+  forgetPassword,
+  resetPassword,
+} = authClient;

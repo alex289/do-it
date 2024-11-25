@@ -3,11 +3,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { Spinner } from '@/components/spinner';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -51,7 +52,8 @@ async function convertImageToBase64(file: File): Promise<string> {
 }
 
 export default function SignUpPage() {
-  const router = useRouter();
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -69,6 +71,7 @@ export default function SignUpPage() {
   };
 
   async function onSubmit(values: z.infer<typeof signUpSchema>) {
+    setLoading(true);
     const res = await signUp.email({
       email: values.email,
       password: values.password,
@@ -83,7 +86,22 @@ export default function SignUpPage() {
       return;
     }
 
-    router.push('/');
+    setLoading(false);
+    setSuccess(true);
+  }
+
+  if (success) {
+    return (
+      <Card className="mx-auto max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">Successfully signed up!</CardTitle>
+        </CardHeader>
+        <CardContent>
+          Check your email for a verification link. Click the link to verify
+          your email address.
+        </CardContent>
+      </Card>
+    );
   }
   return (
     <Card className="mx-auto max-w-sm">
@@ -189,7 +207,10 @@ export default function SignUpPage() {
               )}
             />
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? (
+                <Spinner className="dark:text-black text-white" />
+              ) : null}
               Sign-up
             </Button>
           </form>

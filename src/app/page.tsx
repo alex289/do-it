@@ -51,7 +51,7 @@ async function Home({
         <TaskList tasks={tasks} />
       </div>
       <div className="space-y-8">
-        <CategoryList categories={categories} />
+        <CategoryList categories={categories} tasks={tasks} />
         <TaskStatusChart tasks={tasks} />
         <CategoryCharts tasks={tasks} />
       </div>

@@ -12,6 +12,4 @@ Another task management app build with Next.js, Tailwind CSS, and Drizzle.
 
 ## TODO
 
-- Email verification
-- Password reset
 - user settings
