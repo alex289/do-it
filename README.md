@@ -14,3 +14,4 @@ Another task management app build with Next.js, Tailwind CSS, and Drizzle.
 
 - Email verification
 - Password reset
+- user settings

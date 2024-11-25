@@ -9,7 +9,7 @@ import {
   useListPasskeys,
   useSession,
 } from '@/lib/auth-client';
-import { Avatar, AvatarFallback } from './ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -71,6 +71,12 @@ export default function UserMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="secondary" size="icon" className="rounded-full">
           <Avatar>
+            {session.data.user.image ? (
+              <AvatarImage
+                src={session.data.user.image}
+                alt={session.data.user.name ?? ''}
+              />
+            ) : null}
             <AvatarFallback>
               {getInitials(session.data.user.name ?? '')}
             </AvatarFallback>

@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -27,11 +28,27 @@ import {
 import { Input } from '@/components/ui/input';
 import { signUp } from '@/lib/auth-client';
 
-const signUpSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  password: z.string().min(8),
-});
+const signUpSchema = z
+  .object({
+    name: z.string().min(2),
+    email: z.string().email(),
+    password: z.string().min(8),
+    confirmPassword: z.string().min(8),
+    image: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
+async function convertImageToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -41,14 +58,22 @@ export default function SignUpPage() {
       name: '',
       email: '',
       password: '',
+      confirmPassword: '',
+      image: '',
     },
   });
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    return file ? await convertImageToBase64(file) : '';
+  };
 
   async function onSubmit(values: z.infer<typeof signUpSchema>) {
     const res = await signUp.email({
       email: values.email,
       password: values.password,
       name: values.name,
+      image: values.image.length > 0 ? values.image : undefined,
     });
 
     if (res.error) {
@@ -75,7 +100,7 @@ export default function SignUpPage() {
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem className="grid gap-2">
+                <FormItem className="grid gap-1">
                   <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Max Mustermann" {...field} />
@@ -89,7 +114,7 @@ export default function SignUpPage() {
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="grid gap-2">
+                <FormItem className="grid gap-1">
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
@@ -106,10 +131,58 @@ export default function SignUpPage() {
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem className="grid gap-2">
+                <FormItem className="grid gap-1">
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="..." type="password" {...field} />
+                    <Input placeholder="Password" type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem className="grid gap-1">
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Confirm Password"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem className="grid gap-1">
+                  <FormLabel>Profile image (optional)</FormLabel>
+                  <FormControl>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        className="w-full"
+                        onChange={async (e) =>
+                          field.onChange(await handleImageChange(e))
+                        }
+                      />
+                      {field.value && (
+                        <X
+                          className="cursor-pointer"
+                          onClick={() => {
+                            field.onChange('');
+                          }}
+                        />
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

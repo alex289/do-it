@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Key } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -15,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -29,6 +31,7 @@ import { signIn } from '@/lib/auth-client';
 const signInSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
+  rememberMe: z.boolean(),
 });
 
 export default function SignInPage() {
@@ -59,6 +62,7 @@ export default function SignInPage() {
     const res = await signIn.email({
       email: values.email,
       password: values.password,
+      rememberMe: values.rememberMe,
     });
 
     if (res.error) {
@@ -85,7 +89,7 @@ export default function SignInPage() {
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="grid gap-2">
+                <FormItem className="grid gap-1">
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
@@ -102,11 +106,34 @@ export default function SignInPage() {
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem className="grid gap-2">
-                  <FormLabel>Password</FormLabel>
+                <FormItem className="grid gap-1">
+                  <FormLabel className="flex justify-between">
+                    Password{' '}
+                    <Link href="#" className="text-sm underline">
+                      Forgot your password?
+                    </Link>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="..." type="password" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="rememberMe"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      disabled={field.disabled}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel>Remember me</FormLabel>
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -120,6 +147,7 @@ export default function SignInPage() {
                 type="button"
                 className="gap-2"
                 onClick={async () => await passkeySignIn()}>
+                <Key className="mr-2 h-4 w-4" />
                 Sign-in with Passkey
               </Button>
             </div>
