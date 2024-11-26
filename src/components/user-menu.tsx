@@ -1,14 +1,11 @@
 'use client';
 
+import { LogOut, Settings } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import {
-  passkey,
-  signOut,
-  useListPasskeys,
-  useSession,
-} from '@/lib/auth-client';
+import { signOut, useSession } from '@/lib/auth-client';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import {
@@ -31,7 +28,6 @@ function getInitials(name: string) {
 export default function UserMenu() {
   const [mounted, setMounted] = useState(false);
   const session = useSession();
-  const passkeys = useListPasskeys();
   const router = useRouter();
 
   useEffect(() => {
@@ -86,14 +82,18 @@ export default function UserMenu() {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>{session.data.user.name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          disabled={(passkeys.data && passkeys.data.length > 0) ?? false}
-          onClick={async () => await passkey.addPasskey()}>
-          Add Passkey
+        <DropdownMenuItem asChild>
+          <Link href="/settings">
+            <Settings className="mr-1 h-4 w-4" />
+            Settings
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={async () => await signOutAndRedirect()}>
-          Sign-out
+          <>
+            <LogOut className="mr-1 h-4 w-4" />
+            Sign-out
+          </>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

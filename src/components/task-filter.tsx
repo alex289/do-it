@@ -31,7 +31,7 @@ export default function TaskFilter({ categories }: TaskListProps) {
   const [sizeFilter, setSizeFilter] = useQueryState('size', parseAsString);
 
   return (
-    <div className="flex space-x-2 mb-4">
+    <div className="flex flex-col md:flex-row md:space-x-2 md:space-y-0 space-y-2 mb-4">
       <Input
         type="text"
         placeholder="Search tasks"
@@ -46,7 +46,7 @@ export default function TaskFilter({ categories }: TaskListProps) {
             ? setCategoryFilter(null)
             : setCategoryFilter(value || null)
         }>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-full md:w-[180px]">
           <SelectValue placeholder="Filter by category" />
         </SelectTrigger>
         <SelectContent>
@@ -65,7 +65,7 @@ export default function TaskFilter({ categories }: TaskListProps) {
             ? setPriorityFilter(null)
             : setPriorityFilter(value || null)
         }>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-full md:w-[180px]">
           <SelectValue placeholder="Filter by priority" />
         </SelectTrigger>
         <SelectContent>
@@ -80,7 +80,7 @@ export default function TaskFilter({ categories }: TaskListProps) {
         onValueChange={(value) =>
           value === 'all' ? setSizeFilter(null) : setSizeFilter(value || null)
         }>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-full md:w-[180px]">
           <SelectValue placeholder="Filter by size" />
         </SelectTrigger>
         <SelectContent>

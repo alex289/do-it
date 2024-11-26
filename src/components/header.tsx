@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { ThemeToggle } from './theme-toggle';
@@ -13,7 +14,9 @@ export default function Header() {
   }
   return (
     <header className="mb-8 flex justify-between">
-      <h1 className="text-3xl font-bold">Do it!</h1>
+      <Link href="/" className="text-3xl font-bold">
+        Do it!
+      </Link>
 
       <div className="flex gap-4">
         <UserMenu />

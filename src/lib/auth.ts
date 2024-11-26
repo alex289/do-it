@@ -4,9 +4,17 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { passkey } from 'better-auth/plugins';
 
-import { sendForgotPasswordEmail, verifyEmail } from './email';
+import { changeEmail, sendForgotPasswordEmail, verifyEmail } from './email';
 
 export const auth = betterAuth({
+  user: {
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailVerification: async ({ user, newEmail, url }) => {
+        await changeEmail(newEmail, user.name, url);
+      },
+    },
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,

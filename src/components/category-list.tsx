@@ -17,7 +17,7 @@ export default function CategoryList({ categories, tasks }: CategoryListProps) {
   );
   return (
     <div className="mb-8">
-      <h2 className="text-2xl font-bold mb-4">Categories</h2>
+      <h2 className="text-2xl font-bold mb-5">Categories</h2>
       <div className="space-y-2">
         {Object.entries(categories).map(([_, category]) => (
           <Button
