@@ -136,7 +136,9 @@ export function EditProfile({
         />
 
         <Button disabled={loading} type="submit">
-          {loading ? <Spinner className="mr-2 h-4 w-4" /> : null}
+          {loading ? (
+            <Spinner className="text-white dark:text-black mr-2 h-4 w-4" />
+          ) : null}
           Save changes
         </Button>
       </form>
@@ -192,7 +194,9 @@ export function ChangeEmail({ email }: { email: string }) {
           )}
         />
         <Button disabled={loading} type="submit">
-          {loading ? <Spinner className="mr-2 h-4 w-4" /> : null}
+          {loading ? (
+            <Spinner className="text-white dark:text-black mr-2 h-4 w-4" />
+          ) : null}
           Change email
         </Button>
       </form>
@@ -301,7 +305,9 @@ export function ChangePassword() {
         />
 
         <Button disabled={loading} type="submit">
-          {loading ? <Spinner className="mr-2 h-4 w-4" /> : null}
+          {loading ? (
+            <Spinner className="text-white dark:text-black mr-2 h-4 w-4" />
+          ) : null}
           Change password
         </Button>
       </form>
@@ -322,7 +328,7 @@ export function AddPasskey({ existingPasskey }: { existingPasskey: boolean }) {
       disabled={existingPasskey || loading}
       onClick={async () => submit()}>
       {loading ? (
-        <Spinner className="mr-2 h-4 w-4" />
+        <Spinner className="text-white dark:text-black mr-2 h-4 w-4" />
       ) : (
         <Key className="mr-2 h-4 w-4" />
       )}
@@ -393,7 +399,9 @@ export function DeleteAccount() {
 
             <DialogFooter>
               <Button variant="destructive" disabled={loading} type="submit">
-                {loading ? <Spinner className="mr-2 h-4 w-4" /> : null}
+                {loading ? (
+                  <Spinner className="text-white mr-2 h-4 w-4" />
+                ) : null}
                 Delete account
               </Button>
             </DialogFooter>

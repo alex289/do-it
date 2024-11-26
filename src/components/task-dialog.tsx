@@ -293,7 +293,9 @@ export default function TaskDialog({ categories }: TaskDialogProps) {
             </div>
             <DialogFooter>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? <Spinner /> : null}
+                {isLoading ? (
+                  <Spinner className="text-white dark:text-black" />
+                ) : null}
                 Save Task
               </Button>
             </DialogFooter>
