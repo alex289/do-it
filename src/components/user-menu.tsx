@@ -70,11 +70,11 @@ export default function UserMenu() {
             {session.data.user.image ? (
               <AvatarImage
                 src={session.data.user.image}
-                alt={session.data.user.name ?? ''}
+                alt={session.data.user.name || ''}
               />
             ) : null}
             <AvatarFallback>
-              {getInitials(session.data.user.name ?? '')}
+              {getInitials(session.data.user.name || '')}
             </AvatarFallback>
           </Avatar>
         </Button>

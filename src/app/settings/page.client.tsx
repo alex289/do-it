@@ -337,24 +337,12 @@ export function AddPasskey({ existingPasskey }: { existingPasskey: boolean }) {
   );
 }
 
-const deleteAccountSchema = z.object({
-  password: z.string().min(1),
-});
-
 export function DeleteAccount() {
   const [loading, setLoading] = useState(false);
-  const form = useForm<z.infer<typeof deleteAccountSchema>>({
-    resolver: zodResolver(deleteAccountSchema),
-    defaultValues: {
-      password: '',
-    },
-  });
 
-  async function onSubmit(values: z.infer<typeof deleteAccountSchema>) {
+  async function onSubmit() {
     setLoading(true);
-    const { error } = await deleteUser({
-      password: values.password,
-    });
+    const { error } = await deleteUser();
     setLoading(false);
 
     if (error) {
@@ -381,32 +369,12 @@ export function DeleteAccount() {
           </DialogDescription>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem className="grid gap-1">
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Password" type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <DialogFooter>
-              <Button variant="destructive" disabled={loading} type="submit">
-                {loading ? (
-                  <Spinner className="text-white mr-2 h-4 w-4" />
-                ) : null}
-                Delete account
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+        <DialogFooter>
+          <Button variant="destructive" disabled={loading} onClick={onSubmit}>
+            {loading ? <Spinner className="text-white mr-2 h-4 w-4" /> : null}
+            Delete account
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

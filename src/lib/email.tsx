@@ -1,4 +1,5 @@
 import ChangeEmail from '@/email/change-email';
+import DeleteAccount from '@/email/delete-account';
 import ResetPassword from '@/email/reset-password';
 import VerifyEmail from '@/email/verify-email';
 import { render } from '@react-email/components';
@@ -22,7 +23,7 @@ export async function sendForgotPasswordEmail(
     <ResetPassword
       url={url}
       username={username}
-      baseUrl={process.env.BETTER_AUTH_URL!}
+      baseUrl={process.env.BETTER_AUTH_URL as string}
     />,
   );
 
@@ -45,7 +46,7 @@ export async function verifyEmail(
     <VerifyEmail
       url={url}
       username={username}
-      baseUrl={process.env.BETTER_AUTH_URL!}
+      baseUrl={process.env.BETTER_AUTH_URL as string}
     />,
   );
 
@@ -68,7 +69,7 @@ export async function changeEmail(
     <ChangeEmail
       url={url}
       username={username}
-      baseUrl={process.env.BETTER_AUTH_URL!}
+      baseUrl={process.env.BETTER_AUTH_URL as string}
     />,
   );
 
@@ -76,6 +77,29 @@ export async function changeEmail(
     from: `"Do-It" <${process.env.SMTP_USER}>`,
     to: email,
     subject: 'Do-It - Verify your email',
+    html: emailHtml,
+  };
+
+  await transporter.sendMail(options);
+}
+
+export async function deleteAccountEmail(
+  email: string,
+  username: string,
+  url: string,
+) {
+  const emailHtml = await render(
+    <DeleteAccount
+      url={url}
+      username={username}
+      baseUrl={process.env.BETTER_AUTH_URL as string}
+    />,
+  );
+
+  const options = {
+    from: `"Do-It" <${process.env.SMTP_USER}>`,
+    to: email,
+    subject: 'Do-It - Delete your account',
     html: emailHtml,
   };
 

@@ -1,9 +1,10 @@
 'use client';
 
-import { Task } from '@/db/types';
 import { parseAsString, useQueryState } from 'nuqs';
 
 import { Button } from '@/components/ui/button';
+
+import type { Task } from '@/db/types';
 
 interface CategoryListProps {
   categories: string[];

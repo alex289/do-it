@@ -15,7 +15,7 @@ export default async function authMiddleware(request: NextRequest) {
     },
   );
 
-  const session = (await response.json()) as Session;
+  const session = (await response.json()) as Session | null;
 
   if (!session && !allowedPaths.includes(request.nextUrl.pathname)) {
     return NextResponse.redirect(new URL('/sign-in', request.url));

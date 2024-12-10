@@ -1,6 +1,5 @@
 'use client';
 
-import { Task } from '@/db/types';
 import {
   Cell,
   Pie,
@@ -14,6 +13,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+
+import type { Task } from '@/db/types';
 
 interface PieChartProps {
   tasks: Task[];

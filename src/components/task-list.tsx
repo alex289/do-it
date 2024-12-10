@@ -2,7 +2,6 @@
 
 import { deleteTask } from '@/actions/delete-task';
 import { updateTask } from '@/actions/update-task';
-import { Task } from '@/db/types';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import { parseAsString, useQueryState } from 'nuqs';
@@ -12,6 +11,8 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Spinner } from './spinner';
+
+import type { Task } from '@/db/types';
 
 interface TaskListProps {
   tasks: Task[];

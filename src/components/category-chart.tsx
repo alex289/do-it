@@ -1,6 +1,5 @@
 'use client';
 
-import { Task } from '@/db/types';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +8,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+
+import type { Task } from '@/db/types';
 
 interface ChartsProps {
   tasks: Task[];
@@ -21,8 +22,11 @@ export default function CategoryCharts({ tasks }: ChartsProps) {
         if (!acc[task.category]) {
           acc[task.category] = { completed: 0, total: 0 };
         }
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         acc[task.category]!.total++;
         if (task.isCompleted) {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           acc[task.category]!.completed++;
         }
         return acc;

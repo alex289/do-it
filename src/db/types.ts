@@ -1,3 +1,3 @@
-import { task } from './schema';
+import type { task } from './schema';
 
 export type Task = typeof task.$inferSelect;

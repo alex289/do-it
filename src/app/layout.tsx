@@ -3,11 +3,12 @@ import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
 
 import { GeistSans } from 'geist/font/sans';
-import { Metadata, Viewport } from 'next';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import Header from '@/components/header';
 import { Toaster } from '@/components/ui/sonner';
+
+import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
   title: 'Personal Todo App',

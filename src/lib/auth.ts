@@ -4,10 +4,25 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { passkey } from 'better-auth/plugins';
 
-import { changeEmail, sendForgotPasswordEmail, verifyEmail } from './email';
+import {
+  changeEmail,
+  deleteAccountEmail,
+  sendForgotPasswordEmail,
+  verifyEmail,
+} from './email';
 
 export const auth = betterAuth({
   user: {
+    deleteUser: {
+      enabled: true,
+      sendDeleteAccountVerification: async ({ user }) => {
+        await deleteAccountEmail(
+          user.email,
+          user.name,
+          process.env.BETTER_AUTH_URL as string,
+        );
+      },
+    },
     changeEmail: {
       enabled: true,
       sendChangeEmailVerification: async ({ user, newEmail, url }) => {

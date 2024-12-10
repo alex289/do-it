@@ -1,12 +1,13 @@
 import { db } from '@/db';
 import { task } from '@/db/schema';
-import { Task } from '@/db/types';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 
 import CategoryCharts from '@/components/category-chart';
 import TaskStatusChart from '@/components/task-status-chart';
 import { auth } from '@/lib/auth';
+
+import type { Task } from '@/db/types';
 
 export default async function DisplayPageWrapper({
   searchParams,
